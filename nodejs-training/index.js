@@ -1,9 +1,14 @@
 const http = require('http');
 
 function greet(req,res){
-    res.write("<h1>Hello </h1>")
+    res.writeHead(200,{'Content-Type':'application/json'})
+    res.write(JSON.stringify({
+        id:1,
+        name:'xys',
+        age:'2'
+    }))
     res.end()
 }
-http.createServer((req,res)=>{
+http.createServer(
 greet
-}).listen(5000)
+).listen(5000)
