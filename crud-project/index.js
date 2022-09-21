@@ -19,12 +19,36 @@ mysqlConnection.connect((err)=>{
     }else console.log("DB Connection failed ",JSON.stringify(err,undefined,2));
 })
 
-app.listen(8085, () => console.log('server started at port 8080'))
+app.listen(8085, () => console.log('server started at port 8085'))
 
 app.get('/getemployees',(req,res)=>{
-    mysqlConnection.query('select * from employees',(err,rows,fields)=>{
+    mysqlConnection.query('select * from employee',(err,rows,fields)=>{
         if(!err){
+            res.send(JSON.stringify(rows))
             console.log(rows)
-        }else console.log(err)
+        }else{
+            res.send(err)
+            console.log(err)
+        } 
+    })
+})
+
+
+app.get('/getemployee/:id',(req,res)=>{
+    mysqlConnection.query("select * from employee where EmpId = ?",[req.params.id],(err,rows,fields)=>{
+        if(!err){
+            res.send(JSON.stringify(rows))
+            console.log('Rows : ',rows)
+        }else {
+            res.send(err)
+            console.log(err)}
+    })
+})
+
+app.delete('/deleteemployee/:id',(req,res)=>{
+    mysqlConnection.query("delete from employeedb.employee where EmpId=?",[req.params.id],(err,rows,fields)=>{
+        if(!err){
+            res.send('Successfully deleted employee')
+        }else res.status(500).send(err)
     })
 })
