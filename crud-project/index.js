@@ -52,3 +52,14 @@ app.delete('/deleteemployee/:id',(req,res)=>{
         }else res.status(500).send(err)
     })
 })
+
+app.post('/addemployee',(req,res)=>{
+    let sql = "SET @EmpId = ?; SET @Name=?; SET @EmpCode=?; SET @salary=?;\
+    CALL employeeAddorDelete(@EmpId,@Name,@EmpCode,@salary)";
+    let emp = req.body;
+    mysqlConnection.query(sql,[emp.EmpId,emp.Name,emp.EmpCode,emp.Salary],(err,rows,fields)=>{
+        if(!err){
+            res.send(rows)
+        }else res.status(500).send(err)
+    })
+})
