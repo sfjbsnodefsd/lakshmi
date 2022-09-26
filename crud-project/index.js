@@ -9,7 +9,8 @@ var mysqlConnection = mysql.createConnection({
     host:'localhost',
     user:'root',
     password:'root',
-    database:'employeedb'
+    database:'employeedb',
+  multipleStatements:true
 })
 
 mysqlConnection.connect((err)=>{
@@ -53,13 +54,31 @@ app.delete('/deleteemployee/:id',(req,res)=>{
     })
 })
 
-app.post('/addemployee',(req,res)=>{
-    let sql = "SET @EmpId = ?; SET @Name=?; SET @EmpCode=?; SET @salary=?;\
-    CALL employeeAddorDelete(@EmpId,@Name,@EmpCode,@salary)";
+app.post("/addemployee" , (req, res) => {
     let emp = req.body;
-    mysqlConnection.query(sql,[emp.EmpId,emp.Name,emp.EmpCode,emp.Salary],(err,rows,fields)=>{
-        if(!err){
-            res.send(rows)
-        }else res.status(500).send(err)
+    var sql = "SET @EmpId = ?; SET @Name = ?; SET @EmpCode = ?; SET @Salary = ?; \
+    CALL employeeAddorDelete(@EmpId,@Name,@EmpCode,@Salary);";
+     mysqlConnection.query(sql,[emp.EmpId, emp.Name, emp.EmpCode, emp.Salary] , (err,rows,fields) => {
+        if(!err) {
+          rows.forEach(element => {
+            if(element.constructor == Array){
+                res.status(200).send("Employee added successfully "+element[0].EmpId)
+            }
+          })
+        } else res.status(500).send(err)
     })
-})
+});
+
+
+app.put("/updateemployee" , (req, res) => {
+    let emp = req.body;
+    var sql = "SET @EmpId = ?; SET @Name = ?; SET @EmpCode = ?; SET @Salary = ?; \
+    CALL employeeAddorDelete(@EmpId,@Name,@EmpCode,@Salary);";
+     mysqlConnection.query(sql,[emp.EmpId, emp.Name, emp.EmpCode, emp.Salary] , (err,rows,fields) => {
+        if(!err) {
+                res.send("Employee updated successfully ")
+            
+          
+        } else res.status(500).send(err)
+    })
+});
